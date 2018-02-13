@@ -24,7 +24,7 @@ public Plugin:myinfo =
 
 	version = PLUGIN_VERSION,
 
-	url = "www.swoobles.com"
+	url = "www.swoobles.com https://noobs.club"
 
 }
 
