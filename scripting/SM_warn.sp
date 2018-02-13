@@ -10,7 +10,7 @@
 #define REQUIRE_PLUGIN
 
 
-#define PLUGIN_VERSION "1.2.0 MOd by https://Noobs.club"
+#define PLUGIN_VERSION "1.2.0 MOd by Noobs.club"
 
 // Handles
 new Handle:hDatabase = INVALID_HANDLE;
@@ -446,6 +446,7 @@ public SQL_WarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:datap
 		
 		if (g_iWarnings[client] >= GetConVarInt(g_cVar_maxwarns))
 		{
+			LogMessage("ClientWarnings =%i, MaxWarnings %i",g_iWarnings[client],GetConVarInt(g_cVar_maxwarns) );
 			if(GetConVarBool(g_cVar_reset_warnings))
 			{
 				Format(dbQuery, sizeof(dbQuery), "DELETE FROM smwarn WHERE tsteamid = '%s'", tsteamid);
