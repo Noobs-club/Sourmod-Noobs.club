@@ -57,6 +57,9 @@ public OnPluginStart()
 	g_hCvarBuyTime = FindConVar("mp_buytime");
 	g_iCvarBuyTime = GetConVarInt(g_hCvarBuyTime);
 	g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 60);
+	LogError("g_hCvarBuyTime:%i",g_hCvarBuyTime);
+	LogError("g_iCvarBuyTime:%i",g_iCvarBuyTime);
+	LogError("g_iBuyLeft:%i",g_iBuyLeft);
 }
 enum WeaponsSlot
 {
@@ -69,18 +72,12 @@ enum WeaponsSlot
 }
 public Action:Event_OnRoundStart(Handle:p_hEvent, const String:name[], bool:dontBroadcast)
 {
-
-		g_iBuyLeft = -1;
-	
-	return Plugin_Continue;
+	g_iBuyLeft = -1;
 }
 
 public Action:Event_OnFreezeEnd(Handle:p_hEvent, const String:name[], bool:dontBroadcast)
 {
-
-			g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 15);
-	
-	return Plugin_Continue;
+	g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 15);	
 }
 
 public Action:Command_Awp(client, args)
@@ -113,8 +110,8 @@ public Action:Command_M4A1(client, args)
 }
 public Action:Command_Ak47(client, args)
 {	
-	//LogError("g_iBuyLeft:%i",g_iBuyLeft);
-	//LogError("ActTime:%i",GetTime());
+	LogError("g_iBuyLeft:%i",g_iBuyLeft);
+	LogError("ActTime:%i",GetTime());
 	
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
