@@ -57,9 +57,7 @@ public OnPluginStart()
 	g_hCvarBuyTime = FindConVar("mp_buytime");
 	g_iCvarBuyTime = GetConVarInt(g_hCvarBuyTime);
 	g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 60);
-	LogError("g_hCvarBuyTime:%i",g_hCvarBuyTime);
-	LogError("g_iCvarBuyTime:%i",g_iCvarBuyTime);
-	LogError("g_iBuyLeft:%i",g_iBuyLeft);
+
 }
 enum WeaponsSlot
 {
@@ -72,6 +70,9 @@ enum WeaponsSlot
 }
 public Action:Event_OnRoundStart(Handle:p_hEvent, const String:name[], bool:dontBroadcast)
 {
+	LogError("g_hCvarBuyTime:%i",g_hCvarBuyTime);
+	LogError("g_iCvarBuyTime:%i",g_iCvarBuyTime);
+	LogError("g_iBuyLeft:%i",g_iBuyLeft);
 	g_iBuyLeft = -1;
 }
 
