@@ -2,7 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <adminmenu>
-#include <sourcebans>
+#include <sourcebanspp>
 
 #undef REQUIRE_PLUGIN
 #undef REQUIRE_EXTENSIONS
@@ -62,30 +62,30 @@ public OnPluginStart()
 	LoadTranslations("warn.phrases");
 	
 	// ConVars
-	CreateConVar("sm_warn_version", PLUGIN_VERSION, "SM_warn plugin version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	CreateConVar("sm_warn_version", PLUGIN_VERSION, "SM_warn plugin version", 0|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	
 	// Core cVars
-	g_cVar_reset_warnings = CreateConVar("sm_warn_reset_warnings", "0", "Reset warnings when they reach the max warnings: 0 - Keep warnings, 1 - Delete warnings", FCVAR_PLUGIN, true, 0.0, true, 1.0);
+	g_cVar_reset_warnings = CreateConVar("sm_warn_reset_warnings", "0", "Reset warnings when they reach the max warnings: 0 - Keep warnings, 1 - Delete warnings", 0, true, 0.0, true, 1.0);
 	
 	// Punishment cVars
-	g_cVar_maxwarns = CreateConVar("sm_warn_maxwarns", "3", "Set max warnings reached before action", FCVAR_PLUGIN, true, 1.0, true, 10.0); // Man i dont wanna create a own category for you.. :P
-	g_cVar_punishment = CreateConVar("sm_warn_punishment", "2", "Action to set when a player gets a warning: 1 - message player, 2 - slap player and message, 3 - slay player and message, 4 - Popup agreement and message, 5 - kick player with reason, 6 - ban player with reason", FCVAR_PLUGIN, true, 1.0, true, 6.0);
-	g_cVar_max_punishment = CreateConVar("sm_warn_max_punishment", "1", "Action to set when a player reach max warnings: 1 - kick, 2 - ban", FCVAR_PLUGIN, true, 1.0, true, 2.0);
-	g_cVar_banlength = CreateConVar("sm_warn_banlength", "1", "Time to ban target: 0 - permanent", FCVAR_PLUGIN);
-	g_cVar_slapdamage = CreateConVar("sm_warn_slapdamage", "0", "Slap player with damage: 0 - no damage", FCVAR_PLUGIN, true, 0.0, true, 100.0);
+	g_cVar_maxwarns = CreateConVar("sm_warn_maxwarns", "3", "Set max warnings reached before action", 0, true, 1.0, true, 10.0); // Man i dont wanna create a own category for you.. :P
+	g_cVar_punishment = CreateConVar("sm_warn_punishment", "2", "Action to set when a player gets a warning: 1 - message player, 2 - slap player and message, 3 - slay player and message, 4 - Popup agreement and message, 5 - kick player with reason, 6 - ban player with reason", 0, true, 1.0, true, 6.0);
+	g_cVar_max_punishment = CreateConVar("sm_warn_max_punishment", "1", "Action to set when a player reach max warnings: 1 - kick, 2 - ban", 0, true, 1.0, true, 2.0);
+	g_cVar_banlength = CreateConVar("sm_warn_banlength", "1", "Time to ban target: 0 - permanent", 0);
+	g_cVar_slapdamage = CreateConVar("sm_warn_slapdamage", "0", "Slap player with damage: 0 - no damage", 0, true, 0.0, true, 100.0);
 	
 	// Sound cVars
-	g_cVar_warnsound = CreateConVar("sm_warn_warnsound", "0", "Play a sound when a user receives a warning: 0 - disabled, 1 - enabled", FCVAR_PLUGIN, true, 0.0, true, 1.0);
-	g_cVar_warnsoundPath = CreateConVar("sm_warn_warnsoundpath", "buttons/weapon_cant_buy.wav", "Path to the sound that will play when a user receives a warning", FCVAR_PLUGIN);
+	g_cVar_warnsound = CreateConVar("sm_warn_warnsound", "0", "Play a sound when a user receives a warning: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
+	g_cVar_warnsoundPath = CreateConVar("sm_warn_warnsoundpath", "buttons/weapon_cant_buy.wav", "Path to the sound that will play when a user receives a warning", 0);
 	
 	// Motd panel cVars
-	g_cVar_motdpanel = CreateConVar("sm_warn_motdpanel", "0", "Show a motd panel to client on warn: 0 - disabled, 1 - enabled", FCVAR_PLUGIN, true, 0.0, true, 1.0);
-	g_cVar_warnpaneltitel = CreateConVar("sm_warn_motdpaneltitel", "SM warn panel titel", "Titel of the motd page that will popup", FCVAR_PLUGIN);
-	g_cVar_warnpanelurl = CreateConVar("sm_warn_motdpanelurl", "", "Path to the motd panel that will popup", FCVAR_PLUGIN);
+	g_cVar_motdpanel = CreateConVar("sm_warn_motdpanel", "0", "Show a motd panel to client on warn: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
+	g_cVar_warnpaneltitel = CreateConVar("sm_warn_motdpaneltitel", "SM warn panel titel", "Titel of the motd page that will popup", 0);
+	g_cVar_warnpanelurl = CreateConVar("sm_warn_motdpanelurl", "", "Path to the motd panel that will popup", 0);
 	
 	// other cVars
-	g_cVar_PrintToAdmins = CreateConVar("sm_warn_printtoadmins", "1", "Print previous warnings on connect to admins: 0 - disabled, 1 - enabled", FCVAR_PLUGIN, true, 0.0, true, 1.0);
-	g_cVar_LogWarnings = CreateConVar("sm_warn_logwarnings", "1", "Log the admin commands: 0 - disabled, 1 - enabled", FCVAR_PLUGIN, true, 0.0, true, 1.0);
+	g_cVar_PrintToAdmins = CreateConVar("sm_warn_printtoadmins", "1", "Print previous warnings on connect to admins: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
+	g_cVar_LogWarnings = CreateConVar("sm_warn_logwarnings", "1", "Log the admin commands: 0 - disabled, 1 - enabled", 0, true, 0.0, true, 1.0);
 	
 	AutoExecConfig(true, "SM_warn");
 	
@@ -125,7 +125,7 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 	CreateNative("smwarn_getwarns", Native_GetActiveWarnings);
 	
 	// Not everyone is using sourcebans are they, or do theY ?????
-	MarkNativeAsOptional("SBBanPlayer");
+	MarkNativeAsOptional("SBPP_BanPlayer");
 	
 	RegPluginLibrary("smwarn");
 	
@@ -281,7 +281,7 @@ public OnClientPostAdminCheck(client)
 	if(!IsFakeClient(client))
 	{
 		new String:steamid[32];
-		GetClientAuthString(client, steamid, sizeof(steamid));
+		GetClientAuthId(client, AuthId_Steam2, steamid, sizeof(steamid));
 		
 		new String:dbQuery[254];
 		FormatEx(dbQuery, sizeof(dbQuery),  "SELECT * FROM smwarn WHERE tsteamid='%s' AND expired != '1'", steamid);
@@ -339,14 +339,14 @@ public Action:Command_WarnPlayer(client, args)
 	if (target > 0 && target <= MaxClients )
 	{
 		new String:csteamid[32], String:tsteamid[32], String:cip[32], String:tip[32];
-		GetClientAuthString(target, tsteamid, sizeof(tsteamid));
+		GetClientAuthId(target, AuthId_Steam2, tsteamid, sizeof(tsteamid));
 		GetClientIP(target, tip, sizeof(tip));
 		
 		new Handle:datapack = CreateDataPack();
 		
 		if (client != 0)
 		{
-			GetClientAuthString(client, csteamid, sizeof(csteamid));
+			GetClientAuthId(client, AuthId_Steam2, csteamid, sizeof(csteamid));
 			GetClientIP(client, cip, sizeof(cip));
 			WritePackCell(datapack, GetClientUserId(client));
 			
@@ -417,7 +417,7 @@ public SQL_WarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:datap
 	
 	if (client != 0)
 	{
-		GetClientAuthString(client, asteamid, sizeof(asteamid));
+		GetClientAuthId(client, AuthId_Steam2, asteamid, sizeof(asteamid));
 		GetClientName(client, tempnick2, sizeof(tempnick2));
 		SQL_EscapeString(hDatabase, tempnick2, nickname2, sizeof(nickname2));
 	}
@@ -435,7 +435,7 @@ public SQL_WarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:datap
 	SQL_EscapeString(hDatabase, tempreason, Reason, sizeof(Reason));
 	SQL_EscapeString(hDatabase, hostname, ehostname, sizeof(ehostname));
 	
-	GetClientAuthString(target, tsteamid, sizeof(tsteamid));
+	GetClientAuthId(target, AuthId_Steam2, tsteamid, sizeof(tsteamid));
 	
 	if (SQL_FetchRow(hndl))
 	{
@@ -476,7 +476,7 @@ public SQL_WarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:datap
 					
 					if (g_UseSourcebans)
 					{
-						SourceBans_BanPlayer(0, target, GetConVarInt(g_cVar_banlength), banReason);
+						SBPP_BanPlayer(0, target, GetConVarInt(g_cVar_banlength), banReason);
 					}
 				}
 			}
@@ -529,7 +529,7 @@ public SQL_WarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:datap
 				
 				if (g_UseSourcebans)
 				{
-					SourceBans_BanPlayer(0, target, GetConVarInt(g_cVar_banlength), banReason);
+					SBPP_BanPlayer(0, target, GetConVarInt(g_cVar_banlength), banReason);
 				}
 			}
 		}
@@ -561,7 +561,7 @@ public Action:Command_UnWarnPlayer(client, args)
 	if (target > 0 && target <= MaxClients )
 	{
 		new String:steamid[32];
-		GetClientAuthString(target, steamid, sizeof(steamid));
+		GetClientAuthId(target, AuthId_Steam2, steamid, sizeof(steamid));
 		
 		new String:dbQuery[254];
 		FormatEx(dbQuery, sizeof(dbQuery),  "SELECT * FROM smwarn WHERE tsteamid='%s' AND expired != '1' ORDER BY time DESC LIMIT 1", steamid);
@@ -617,7 +617,7 @@ public SQL_UnWarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:dat
 		
 		if (client != 0)
 		{
-			GetClientAuthString(client, csteamid, sizeof(csteamid));
+			GetClientAuthId(client, AuthId_Steam2, csteamid, sizeof(csteamid));
 			GetClientIP(client, cip, sizeof(cip));
 		}
 		else
@@ -677,7 +677,7 @@ public Action:Command_WarnReset(client, args)
 	if (target > 0 && target <= MaxClients )
 	{
 		new String:steamid[32];
-		GetClientAuthString(target, steamid, sizeof(steamid));
+		GetClientAuthId(target, AuthId_Steam2, steamid, sizeof(steamid));
 		
 		new String:dbQuery[254];
 		FormatEx(dbQuery, sizeof(dbQuery),  "SELECT * FROM smwarn WHERE tsteamid='%s'", steamid);
@@ -737,7 +737,7 @@ public SQL_ResetWarnPlayer(Handle:owner, Handle:hndl, const String:error[], any:
 		
 		if (client != 0)
 		{
-			GetClientAuthString(client, csteamid, sizeof(csteamid));
+			GetClientAuthId(client, AuthId_Steam2, csteamid, sizeof(csteamid));
 			GetClientIP(client, cip, sizeof(cip));
 		}
 		else
@@ -779,7 +779,7 @@ public Action:Command_CheckWarnPlayer(client, args)
 	if (target > 0 && target <= MaxClients )
 	{
 		new String:steamid[32];
-		GetClientAuthString(target, steamid, sizeof(steamid));
+		GetClientAuthId(target, AuthId_Steam2, steamid, sizeof(steamid));
 		
 		new String:dbQuery[254];
 		FormatEx(dbQuery, sizeof(dbQuery),  "SELECT * FROM smwarn WHERE tsteamid='%s'", steamid);
