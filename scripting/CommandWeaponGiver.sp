@@ -4,19 +4,19 @@
 
 #pragma semicolon 1
 
-#define PLUGIN_VERSION "1.0"
+#define PLUGIN_VERSION "1.2"
 
 new weaponIndex;
 new Handle:g_hCvarBuyTime = INVALID_HANDLE;
 new g_iBuyLeft = -1, g_iCvarBuyTime;
-
+new g_iOffsLastPlaceName = -1;
 
 #define MAX_WEAPONS	25	
 
 public Plugin:myinfo =
 {
 	name = "Weapon Give By command",
-	author = "SynysteR, modified by WhiteWolf",
+	author = "SynysteR, modified by WhiteWolf(1.2,Location)",
 	description = "type in chat for example: !awp and you will get an awp, works for all weapons",
 	version = PLUGIN_VERSION
 }
@@ -57,7 +57,7 @@ public OnPluginStart()
 	g_hCvarBuyTime = FindConVar("mp_buytime");
 	g_iCvarBuyTime = GetConVarInt(g_hCvarBuyTime);
 	g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 60);
-
+	g_iOffsLastPlaceName = FindSendPropInfo("CBasePlayer", "m_szLastPlaceName");
 }
 enum WeaponsSlot
 {
@@ -70,22 +70,46 @@ enum WeaponsSlot
 }
 public Action:Event_OnRoundStart(Handle:p_hEvent, const String:name[], bool:dontBroadcast)
 {
-	LogError("g_hCvarBuyTime:%i",g_hCvarBuyTime);
-	LogError("g_iCvarBuyTime:%i",g_iCvarBuyTime);
-	LogError("g_iBuyLeft:%i",g_iBuyLeft);
-	g_iBuyLeft = -1;
+
+		g_iBuyLeft = -1;
+	
+	
 }
 
 public Action:Event_OnFreezeEnd(Handle:p_hEvent, const String:name[], bool:dontBroadcast)
 {
-	g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 15);	
+
+			g_iBuyLeft = GetTime() + (g_iCvarBuyTime * 15);
+	
 }
+
+bool:LocationIsSpawn(client)
+{
+	new Float:CurrentPos[3];
+	GetClientAbsOrigin(client, CurrentPos);
+	// get place name
+	decl String:place[24];
+	GetEntDataString(client, g_iOffsLastPlaceName, place, sizeof(place));
+
+	new bool:LocationCTSpawn = StrEqual(place, "CTSpawn", true);
+	new bool:LocationTSpawn = StrEqual(place, "TSpawn", true);
+	if(LocationCTSpawn)
+	{
+		return LocationCTSpawn;
+	}
+	else if(LocationTSpawn)
+	{
+		return LocationTSpawn;
+	}
+	return false;
+}
+
 
 public Action:Command_Awp(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -99,7 +123,7 @@ public Action:Command_M4A1(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -111,12 +135,12 @@ public Action:Command_M4A1(client, args)
 }
 public Action:Command_Ak47(client, args)
 {	
-	LogError("g_iBuyLeft:%i",g_iBuyLeft);
-	LogError("ActTime:%i",GetTime());
+	// LogError("g_iBuyLeft:%i",g_iBuyLeft);
+	// LogError("ActTime:%i",GetTime());
 	
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -130,7 +154,7 @@ public Action:Command_Deagle(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{		
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -144,7 +168,7 @@ public Action:Command_Aug(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -158,7 +182,7 @@ public Action:Command_Elite(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -172,7 +196,7 @@ public Action:Command_Famas(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -186,7 +210,7 @@ public Action:Command_FiveSeven(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -200,7 +224,7 @@ public Action:Command_G3sg1(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -214,7 +238,7 @@ public Action:Command_Galil(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -228,7 +252,7 @@ public Action:Command_Glock(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -242,7 +266,7 @@ public Action:Command_M249(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -256,7 +280,7 @@ public Action:Command_M3(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -270,7 +294,7 @@ public Action:Command_Mac10(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -284,7 +308,7 @@ public Action:Command_Mp5(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -298,7 +322,7 @@ public Action:Command_P228(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -312,7 +336,7 @@ public Action:Command_P90(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -326,7 +350,7 @@ public Action:Command_Scout(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -340,7 +364,7 @@ public Action:Command_Sg550(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -354,7 +378,7 @@ public Action:Command_Sg552(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -368,7 +392,7 @@ public Action:Command_Tmp(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -382,7 +406,7 @@ public Action:Command_Ump45(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -396,7 +420,7 @@ public Action:Command_Usp(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 1)) != -1)
 			RemovePlayerItem(client, weaponIndex);
@@ -410,7 +434,7 @@ public Action:Command_Xm1014(client, args)
 {
 	if(!IsPlayerAlive(client))
 		PrintToChat(client, "\x04[SM] \x03 You can't use this command while you are dead.");
-	else if(GetTime() < g_iBuyLeft)
+	else if(GetTime() < g_iBuyLeft && LocationIsSpawn)
 	{	
 		if ((weaponIndex = GetPlayerWeaponSlot(client, 0)) != -1)
 			RemovePlayerItem(client, weaponIndex);
